@@ -1,3 +1,4 @@
 rootProject.name = 'learning-microservices'
 include ':eurekaServer'
 include ':customerService'
+include ':bookingService'
