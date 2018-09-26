@@ -9,6 +9,10 @@ Microservices architecture but not always implemented, like:
  * Fault-tolerance (fallback)
  * Cache (pending)
  
+ Additional features more devOps-related are also included, like:
+  * Automatic "containerization" of each Service using _Docker_
+  * Services orchestration using _Kubernetes_ over _Docker_ (pending)
+ 
  
  The project implements several services in a fictional "travel agency" company:
   * A Service to manage customer information (get info, register a new user, etc)
