@@ -1,5 +1,11 @@
 # eurekaServer
 
+> NOTE: The entry-point of this project, if you want to learn how all the libraries or frameworks are being 
+applied, is the _customerService_ module. the rest of modules, including this one, relay on that one, and
+some explanations are not repeated (for example, instruction about hot to install the distribuitable in the 
+local Maven repo, or how to generate a Docker image are opnly explain in the _customerService_ module), but
+they are applied on different modules through the project.
+
 This module does NOT contain any logic. It's a Web Server App whcih only purpose is to work as a _Eureka Server_, so
 other Services can connect, register into it, and also fetch information from it so they can use another services 
 registered.

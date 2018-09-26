@@ -78,7 +78,7 @@ publishing {
 
 After applying the _maven-publish_ plugin, additional gradle tasks will be available to us. One of them is 
 `publishtoMavenLocal`, which will publish both artifacts to our local repo. This publishing is configured by the
-`publishing` intruction above; in this case we are declaring 2 artifacts to publish, one with the whole application
+`publishing` instruction above; in this case we are declaring 2 artifacts to publish, one with the whole application
 (the fat jar), and another one with the client Jar.
 
 
@@ -89,7 +89,7 @@ defined in the `client` package. The whole idea is to provide an interface, and 
 
 * A default implementation, which will make a HTTP call to our service. This is the "normal" or "regular" way, as it 
 will be used by other services in the architecture.
-* A "local" implementation, which will NOT make any HTTP call. Instead, this sercice will invoke directly the 
+* A "local" implementation, which will NOT make any HTTP call. Instead, this service will invoke directly the 
 business logic. Obviously, this will ONLY work in the same environment where the business logic works. In other
 works: if the business logic need to access a DB or any other resource, and if we want to use the "local"
 implementation, we'll need to execute our code in an environment with access to those resources, too. 
@@ -105,7 +105,7 @@ fallback capabilities_
 
 ### Registering our App in the Eureka Server
 
-First, we need our _Eureka Server_ up and running, so pur Applicaiton can register on it on starting. These are the 
+First, we need our _Eureka Server_ up and running, so pur Application can register on it on starting. These are the 
 changes needed in our code:
 
 In the `gradle.build` file:
@@ -119,7 +119,7 @@ dependencies {
      compile('org.springframework.cloud:spring-cloud-starter-hystrix:1.4.5.RELEASE')
 }
 ````
-We are using FeignClients in this project to implement a Client of our won service, and our Feign client automatically
+We are using _FeignClients_ in this project to implement a Client of our won service, and our Feign client automatically
 connects to the Eureka Server, using `ribbon` as client-side load balancing library. also, we are including fallback
 capabilities, implemented by the `hystrix`library behind the scenes.
 
@@ -143,3 +143,107 @@ import org.springframework.cloud.openfeign.FeignClient;
 
 _(the 'fallback' property is used for the fallback scenario)_
 
+
+### Including Health indicators and API Documentation
+
+There are libraries tat help us monitor and monitor our Services, like:
+ * actuator: This is part of the _SpringBoot_ ecosystem, and if we add it to our classpath, without doing 
+ anything else, it will publish different _endpoints_ in our project (be carefoul your endpoints don't use 
+ the same URL's) yu can invoke through GET calls. In these endpoints you can get information about the
+ "health" of the application (is it still alie, etc). 
+ 
+ * swagger: This library allows you to document each one of the endpoints you publish as an _endpoint_. Then,
+ during deployment, new endpoints are automatically created (again, be careful your application endpoints URL's 
+ don't overlap the ones from this library). One of these endpoints even includes a User Interfaces in form of a
+ HTML page where you can see all the applicaiton endpoints and even run tests (HTTP calls) on them.
+ 
+ In order to enable both libraries, these are the changes needed:
+ 
+ In the _build.gradle_:
+ 
+ ````
+ compile('io.springfox:springfox-swagger2:2.9.2')
+ 	compile('io.springfox:springfox-swagger-ui:2.9.2')
+ 	compile("org.springframework.boot:spring-boot-starter-actuator")
+ ````
+ 
+ And, in the case of the _swagger_ class, we need to provide some _Configuration_ to SpringBoot. 
+ In this case, we've crated a new class ('SwaggerConfig') nad we placed it in a "config" package:
+ 
+ ````
+ package com.ilozanof.learning.microservices.customerService.config;
+ 
+ import org.springframework.context.annotation.Bean;
+ import org.springframework.context.annotation.Configuration;
+ import springfox.documentation.builders.PathSelectors;
+ import springfox.documentation.builders.RequestHandlerSelectors;
+ import springfox.documentation.spi.DocumentationType;
+ import springfox.documentation.spring.web.plugins.Docket;
+ import springfox.documentation.swagger2.annotations.EnableSwagger2;
+ 
+ @Configuration
+ @EnableSwagger2
+ public class SwaggerConfig {
+     @Bean
+     public Docket api() {
+         return new Docket(DocumentationType.SWAGGER_2)
+                 .select()
+                 .apis(RequestHandlerSelectors.any())
+                 .paths(PathSelectors.any())
+                 .build();
+     }
+ }
+ 
+ ````
+ 
+ * More info about _Actuator_ and _swagger_:
+   * [Spring Boot Actuator
+](https://www.baeldung.com/spring-boot-actuators)
+   * [Setting Up Swagger 2 with a Spring REST API](https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api)
+
+
+## Using _Docker_ to run the Service
+
+> We are assuming that **Docker** is propoerly installed in the environment.
+
+We can configure _Gradle_ to generate a _Docker_ image during the build process. Instead of using a 
+_Dockerfile_ and create the image externally using the _docker command line intercace_, we can generate
+the image in a more automatic way.
+
+To do that, these are the changes needed:
+
+* In the _build.gradle_ file, we need to apply the _transmode gradle Docjker plugin_ which will take 
+care of the Docker image generation (this is the most used plugin for this, but there are more). This 
+plugin in turn makes use of the _application_ plugin, so we need to use that one as well.
+
+````
+buildscript {
+	ext {
+		...
+		gradleDockerVersion   = "1.2"
+...
+dependencies {
+		...
+        classpath("se.transmode.gradle:gradle-docker:${gradleDockerVersion}")
+	}
+...
+apply plugin: 'application'
+...
+apply plugin: 'docker'
+...
+mainClassName = "com.ilozanof.learning.microservices.customerService.CustomerServiceApplication"
+...
+task buildDocker(type: Docker) {
+    baseImage = "jeanblanchard/java:8"
+    tag = "learning-microservices/customer-service"
+    addFile {
+        from jar
+    }
+    exposePort 8081
+    entryPoint(['java', '-jar', 'customerService-0.0.1-SNAPSHOT.jar'])
+}
+buildDocker.dependsOn(build)
+````
+
+After these changes, we'll have a new "builddocker" task available, which will create a Docker image our of 
+the Spring Boot Fat Jar. 

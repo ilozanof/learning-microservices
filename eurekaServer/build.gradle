@@ -1,30 +1,52 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.4.RELEASE'
+		gradleDockerVersion   = "1.2"
 	}
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("se.transmode.gradle:gradle-docker:${gradleDockerVersion}")
 	}
 }
 
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
 
 group = 'com.ilozanof.learning.microservices.eurekaServer'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
+mainClassName = "com.ilozanof.learning.microservices.eurekaServer.eurekaServer.EurekaServerApplication"
 
 repositories {
 	mavenCentral()
 }
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-web')
+
+    compile('org.springframework.boot:spring-boot-starter')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile('org.springframework.boot:spring-boot-starter-web')
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:2.0.1.RELEASE')
+
 }
+
+task buildDocker(type: Docker) {
+    baseImage = "jeanblanchard/java:8"
+    tag = "learning-microservices/eureka-server"
+    addFile {
+        from jar
+    }
+    exposePort 8761
+    entryPoint(['java', '-jar', 'eurekaServer-0.0.1-SNAPSHOT.jar'])
+}
+buildDocker.dependsOn(build)

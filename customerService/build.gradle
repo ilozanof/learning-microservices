@@ -2,19 +2,23 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.4.RELEASE'
+		gradleDockerVersion   = "1.2"
 	}
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("se.transmode.gradle:gradle-docker:${gradleDockerVersion}")
 	}
 }
 
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
 
 apply plugin: 'maven-publish'
 
@@ -22,6 +26,8 @@ apply plugin: 'maven-publish'
 group = 'com.ilozanof.learning.microservices'
 version = '1.0-SNAPSHOT'
 sourceCompatibility = 1.8
+
+mainClassName = "com.ilozanof.learning.microservices.customerService.CustomerServiceApplication"
 
 repositories {
 	mavenCentral()
@@ -36,6 +42,11 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-starter-openfeign:2.0.1.RELEASE')
     compile('org.springframework.cloud:spring-cloud-starter-netflix-ribbon:2.0.1.RELEASE')
 	compile('org.springframework.cloud:spring-cloud-starter-hystrix:1.4.5.RELEASE')
+
+	compile('io.springfox:springfox-swagger2:2.9.2')
+	compile('io.springfox:springfox-swagger-ui:2.9.2')
+	compile("org.springframework.boot:spring-boot-starter-actuator")
+
 }
 
 
@@ -75,3 +86,14 @@ publishing {
 		}
 	}
 }
+
+task buildDocker(type: Docker) {
+    baseImage = "jeanblanchard/java:8"
+    tag = "learning-microservices/customer-service"
+    addFile {
+        from jar
+    }
+    exposePort 8081
+    entryPoint(['java', '-jar', 'customerService-0.0.1-SNAPSHOT.jar'])
+}
+buildDocker.dependsOn(build)
