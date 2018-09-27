@@ -1,5 +1,5 @@
 # This Dockerfile creates a Docker image with the EurekaServer app.
-# NOTE: Tjhis is only for Academkic purposes. the best way to generate a Docker image
+# NOTE: This is only for Academic purposes. the best way to generate a Docker image
 # is as part of the build process, using a Gradle plugin (See README.MD file).
 
 FROM jeanblanchard/java:8

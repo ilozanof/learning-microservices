@@ -141,6 +141,14 @@ import org.springframework.cloud.openfeign.FeignClient;
 @FeignClient(value = "customerService", fallback = CustomerServiceFallback.class)
 ```` 
 
+> IMPORTANT: In the configuration file above there is a referene to the Eureka Server, using 
+"localhost" (and IP Address would be also used). this works fine when we run the service in our 
+environment. BUT when we run the services inside a Docker container, these references don't work
+anymore. 
+
+> **When running inside a Docker container, we need to use the _Container name_ instead of the 
+hostname or IP Address (Docker automatically links each container name with an IP)**
+
 _(the 'fallback' property is used for the fallback scenario)_
 
 
@@ -245,5 +253,10 @@ task buildDocker(type: Docker) {
 buildDocker.dependsOn(build)
 ````
 
-After these changes, we'll have a new "builddocker" task available, which will create a Docker image our of 
+After these changes, we'll have a new "buildDocker" task available, which will create a Docker image our of 
 the Spring Boot Fat Jar. 
+
+## Services orchestation using Docker-compone
+
+> since the orchestation, by definition, encomapsses the _whole_ system, not just this service, it will 
+be explained in the _general_ [README.MD](../README.MD) file, at a project level.

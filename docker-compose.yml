@@ -1,0 +1,14 @@
+version: "3"
+services:
+  eureka:
+    image: learning-microservices/eureka-server:0.0.1-SNAPSHOT
+    container_name: eureka
+    ports:
+      - "8761:8761"
+  customer:
+    image: learning-microservices/customer-service:0.0.1-SNAPSHOT
+    container_name: customer
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka

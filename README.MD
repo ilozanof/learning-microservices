@@ -77,3 +77,47 @@ This project has been created with the following tools:
  include ':bookingService'
  ````
  
+ ## How to Orchestate the different Services
+ 
+ _Docker compose_ is a tool that comes out-of-the-box with Docker, and helps us organize different 
+ systems/Microservices that make up the whole system and need to cooperate with each other.
+ 
+ The idea is to define our system in a configuration file (_docker-compose.yml_), where we define all the
+ "systems" that make u the systems. In our example, those systems are the different microservices implemented 
+ in this project.
+ 
+ So the first step is to define the content of the _docker-compose.yml_ file:
+ 
+ ````
+ version: "3"
+ services:
+   eureka:
+     image: learning-microservices/eureka-server:0.0.1-SNAPSHOT
+     container_name: eureka
+     ports:
+       - "8761:8761"
+   customer:
+     image: learning-microservices/customer-service:0.0.1-SNAPSHOT
+     container_name: customer
+     ports:
+       - "8081:8081"
+     depends_on:
+       - eureka
+ ````
+ 
+ The, from the command-line, you can start up the whole infrastructure with this command:
+ ````
+ docker-compose up -d
+ ````
+ 
+ If everything is ok, 2 diofferent containers will be set up and run, each one running a different 
+ service.
+ > NOTE: We are asumming here that yhou hae already created one Docker image for each one of the 
+ Microservices used in this example.
+ 
+ > Microservices are now running inside containers, some things don´´ work the same way. For 
+ instance, if we are referencing other hosts (like in the configuration files, etc) by using the hostname 
+ or the IP address, that won't work now. instead of using IOP addresses or hostname, we have to use now 
+ _Container names_ (Docker automatically links an IP address for each container running an image, with the 
+ container name). YOU MUST take this into consideration when you have other machines or host references in your code or
+ configuration files (like when you configure on each Service the location of the Eureka Server).
