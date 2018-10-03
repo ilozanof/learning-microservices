@@ -110,7 +110,7 @@ This project has been created with the following tools:
  docker-compose up -d
  ````
  
- If everything is ok, 2 diofferent containers will be set up and run, each one running a different 
+ If everything is ok, 2 different containers will be set up and run, each one running a different 
  service.
  > NOTE: We are asumming here that yhou hae already created one Docker image for each one of the 
  Microservices used in this example.

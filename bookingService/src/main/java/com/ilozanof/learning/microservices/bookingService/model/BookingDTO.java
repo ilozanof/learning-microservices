@@ -1,4 +1,4 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService.model;
+package com.ilozanof.learning.microservices.bookingService.model;
 
 import com.ilozanof.learning.microservices.customerService.model.CustomerDTO;
 

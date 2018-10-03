@@ -1,16 +1,11 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService;
+package com.ilozanof.learning.microservices.bookingService;
 
-import com.ilozanof.learning.microservices.customerService.client.CustomerService;
-import com.ilozanof.learning.microservices.customerService.client.CustomerServiceHttpImpl;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 
 // NOTE: Since in this applicaiton we are using Beans from another JAR projecgt (the customerService), we

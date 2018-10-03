@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: customer-service
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: customer-service
+        tier: backend
+    spec:
+      containers:
+      - name: customer-service
+        image: ilozanof/customer-service
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+        ports:
+        - containerPort: 8080

@@ -63,13 +63,14 @@ dependencies {
 
 task createClientJar(type: Zip) {
     dependsOn compileJava
-    destinationDir = file("$rootDir/build")
+    destinationDir = file("$rootDir/build/libs")
     archiveName = rootProject.name + 'Client' + '-' + rootProject.version + '.jar'
     from sourceSets.main.output
     include 'com/ilozanof/learning/microservices/customerService/model/**/*'
     include 'com/ilozanof/learning/microservices/customerService/logic/**/*'
     include 'com/ilozanof/learning/microservices/customerService/client/**/*'
 }
+createClientJar.dependsOn(build)
 
 publishing {
 	publications {
@@ -80,12 +81,13 @@ publishing {
 		}
 
 		serviceClient(MavenPublication) {
-			artifact 'build/' + rootProject.name + 'Client' + '-' + rootProject.version + '.jar'
+			artifact 'build/libs/' + rootProject.name + 'Client' + '-' + rootProject.version + '.jar'
 			groupId group
 			artifactId project.name + 'Client'
 		}
 	}
 }
+publishToMavenLocal.dependsOn(createClientJar)
 
 task buildDocker(type: Docker) {
     baseImage = "jeanblanchard/java:8"

@@ -1,11 +1,12 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService.controller;
+package com.ilozanof.learning.microservices.bookingService.controller;
 
-import com.ilozanof.learning.microservices.bookingService.bookingService.client.BookingService;
-import com.ilozanof.learning.microservices.bookingService.bookingService.model.BookingDTO;
+import com.ilozanof.learning.microservices.bookingService.client.BookingService;
+import com.ilozanof.learning.microservices.bookingService.model.BookingDTO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class BookingController {
 
     // business logic...
     @Autowired
+    @Qualifier("BookingServiceLocal")
     BookingService bookingService;
 
     @RequestMapping(method = RequestMethod.GET, value="/bookFor/{customerLogin}", produces = "application/json")

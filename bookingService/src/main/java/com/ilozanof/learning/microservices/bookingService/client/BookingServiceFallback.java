@@ -1,6 +1,6 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService.client;
+package com.ilozanof.learning.microservices.bookingService.client;
 
-import com.ilozanof.learning.microservices.bookingService.bookingService.model.BookingDTO;
+import com.ilozanof.learning.microservices.bookingService.model.BookingDTO;
 import com.ilozanof.learning.microservices.customerService.model.CustomerDTO;
 import org.springframework.stereotype.Component;
 

@@ -1,23 +1,31 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.5.RELEASE'
+        gradleDockerVersion   = "1.2"
 	}
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("se.transmode.gradle:gradle-docker:${gradleDockerVersion}")
 	}
 }
 
 apply plugin: 'java'
+apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
+
+apply plugin: 'maven-publish'
 
 group = 'com.ilozanof.learning.microservices.bookingService'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
+
+mainClassName = "com.ilozanof.learning.microservices.bookingService.BookingServiceApplication"
 
 repositories {
 	mavenCentral()
@@ -34,4 +42,48 @@ dependencies {
     compile('org.springframework.cloud:spring-cloud-starter-openfeign:2.0.1.RELEASE')
     compile('org.springframework.cloud:spring-cloud-starter-netflix-ribbon:2.0.1.RELEASE')
     compile('org.springframework.cloud:spring-cloud-starter-hystrix:1.4.5.RELEASE')
+
+    compile('io.springfox:springfox-swagger2:2.9.2')
+    compile('io.springfox:springfox-swagger-ui:2.9.2')
+    compile("org.springframework.boot:spring-boot-starter-actuator")
 }
+
+task createClientJar(type: Zip) {
+    dependsOn compileJava
+    destinationDir = file("$rootDir/build/libs")
+    archiveName = rootProject.name + 'Client' + '-' + rootProject.version + '.jar'
+    from sourceSets.main.output
+    include 'com/ilozanof/learning/microservices/bookingService/model/**/*'
+    include 'com/ilozanof/learning/microservices/bookingService/logic/**/*'
+    include 'com/ilozanof/learning/microservices/bookingService/client/**/*'
+}
+createClientJar.dependsOn(build)
+
+publishing {
+    publications {
+        serviceApp(MavenPublication) {
+            from components.java
+            groupId group
+            artifactId project.name + 'App'
+        }
+
+        serviceClient(MavenPublication) {
+            artifact 'build/libs/' + rootProject.name + 'Client' + '-' + rootProject.version + '.jar'
+            groupId group
+            artifactId project.name + 'Client'
+        }
+    }
+}
+
+publishToMavenLocal.dependsOn(createClientJar)
+
+task buildDocker(type: Docker) {
+    baseImage = "jeanblanchard/java:8"
+    tag = "learning-microservices/booking-service"
+    addFile {
+        from jar
+    }
+    exposePort 8080
+    entryPoint(['java', '-jar', 'bookingService-0.0.1-SNAPSHOT.jar'])
+}
+buildDocker.dependsOn(build)

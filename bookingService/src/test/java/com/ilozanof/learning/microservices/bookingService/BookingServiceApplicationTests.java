@@ -1,4 +1,4 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService;
+package com.ilozanof.learning.microservices.bookingService;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

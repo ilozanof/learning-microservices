@@ -1,11 +1,13 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService.client;
+package com.ilozanof.learning.microservices.bookingService.client;
 
-import com.ilozanof.learning.microservices.bookingService.bookingService.logic.BookingManager;
-import com.ilozanof.learning.microservices.bookingService.bookingService.model.BookingDTO;
+import com.ilozanof.learning.microservices.bookingService.logic.BookingManager;
+import com.ilozanof.learning.microservices.bookingService.model.BookingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
+@Qualifier("BookingServiceLocal")
 public class BookingServiceLocalImpl implements BookingService {
 
     @Autowired

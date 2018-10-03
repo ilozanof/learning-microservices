@@ -12,3 +12,10 @@ services:
       - "8081:8081"
     depends_on:
       - eureka
+  booking:
+    image: learning-microservices/booking-service:0.0.1-SNAPSHOT
+    container_name: booking
+    ports:
+     - "8080:8080"
+    depends_on:
+      - eureka

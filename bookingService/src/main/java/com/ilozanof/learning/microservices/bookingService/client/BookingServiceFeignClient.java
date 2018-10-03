@@ -1,6 +1,6 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService.client;
+package com.ilozanof.learning.microservices.bookingService.client;
 
-import com.ilozanof.learning.microservices.bookingService.bookingService.model.BookingDTO;
+import com.ilozanof.learning.microservices.bookingService.model.BookingDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

@@ -1,6 +1,6 @@
-package com.ilozanof.learning.microservices.bookingService.bookingService.logic;
+package com.ilozanof.learning.microservices.bookingService.logic;
 
-import com.ilozanof.learning.microservices.bookingService.bookingService.model.BookingDTO;
+import com.ilozanof.learning.microservices.bookingService.model.BookingDTO;
 import com.ilozanof.learning.microservices.customerService.client.CustomerService;
 import com.ilozanof.learning.microservices.customerService.model.CustomerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
